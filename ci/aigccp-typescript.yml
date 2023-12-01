@@ -1,0 +1,22 @@
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+steps:
+  - script: bash startFabric.sh typescript
+    workingDirectory: aigccp
+    displayName: Start Fabric
+  - script: retry -- npm install
+    workingDirectory: aigccp/typescript
+    displayName: Install AigcCp application dependencies
+  - script: npm run build
+    workingDirectory: aigccp/typescript
+    displayName: Build AigcCp application
+  - script: |
+      set -ex
+      node dist/enrollAdmin
+      node dist/registerUser
+      node dist/invoke
+      node dist/query
+    workingDirectory: aigccp/typescript
+    displayName: Run AigcCp application

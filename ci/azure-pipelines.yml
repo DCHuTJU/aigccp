@@ -1,0 +1,51 @@
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+trigger:
+  - master
+  - release-1.4
+
+jobs:
+  - job: aigccp_go
+    displayName: AigcCp (Go)
+    pool:
+      vmImage: ubuntu-18.04
+    dependsOn: []
+    timeoutInMinutes: 60
+    steps:
+      - template: install-deps.yml
+      - template: install-fabric.yml
+      - template: aigccp-go.yml
+  - job: aigccp_java
+    displayName: AigcCp (Java)
+    pool:
+      vmImage: ubuntu-18.04
+    dependsOn: []
+    timeoutInMinutes: 60
+    steps:
+      - template: install-deps.yml
+      - template: install-fabric.yml
+      - template: aigccp-java.yml
+  - job: aigccp_javascript
+    displayName: AigcCp (JavaScript)
+    pool:
+      vmImage: ubuntu-18.04
+    dependsOn: []
+    timeoutInMinutes: 60
+    steps:
+      - template: install-deps.yml
+      - template: install-fabric.yml
+      - template: aigccp-javascript.yml
+  - job: aigccp_typescript
+    displayName: AigcCp (TypeScript)
+    pool:
+      vmImage: ubuntu-18.04
+    dependsOn: []
+    timeoutInMinutes: 60
+    steps:
+      - template: install-deps.yml
+      - template: install-fabric.yml
+      - template: aigccp-typescript.yml
+
+

@@ -1,0 +1,14 @@
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+steps:
+  - script: bash startFabric.sh java
+    workingDirectory: aigccp
+    displayName: Start Fabric
+  - script: retry -- mvn dependency:go-offline
+    workingDirectory: aigccp/java
+    displayName: Install AigcCp application dependencies
+  - script: mvn test
+    workingDirectory: aigccp/java
+    displayName: Run AigcCp application
