@@ -6,6 +6,7 @@
 
 const { Contract } = require('fabric-contract-api');
 
+// 逻辑代码
 class AigcCp extends Contract {
 
     async initLedger(ctx) {
@@ -88,11 +89,20 @@ class AigcCp extends Contract {
         console.info('============= START : Create Song ===========');
 
         const song = {
+            // 字段设计
             style,
             docType: 'song',
             make,
             record,
             owner,
+            // 每首歌对应的simHash字段
+            songHash,
+            // 当前版权拥有者id信息
+            songOwner,
+            // 前一个版本的hash信息（用于确保可靠性，比如当前song的前一个版本是v1，那么这里就是v1对应的hash，sha256即可）
+            hash,
+            // TODO: 时间戳（待定）
+            timestamp,
         };
 
         await ctx.stub.putState(songNumber, Buffer.from(JSON.stringify(song)));
