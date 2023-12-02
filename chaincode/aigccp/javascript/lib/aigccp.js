@@ -6,6 +6,64 @@
 
 const { Contract } = require('fabric-contract-api');
 
+// 数据结构
+class Node {
+    constructor(value) {
+        this.value = value;
+        this.edges = [];
+    }
+}
+
+class Edge {
+    constructor(value, nodeFrom, nodeTo) {
+        this.value = value;
+        this.nodeFrom = nodeFrom;
+        this.nodeTo = nodeTo;
+    }
+}
+
+class DAG {
+    constructor(nodes = [], edges = []) {
+        this.nodes = nodes;
+        this.edges = edges;
+    }
+
+    addNode(value) {
+        this.nodes.push(new Node(value));
+    }
+
+    addEdge(value, nodeFromValue, nodeToValue) {
+        let nodeFrom = this.nodes.find(node => node.value === nodeFromValue);
+        let nodeTo = this.nodes.find(node => node.value, nodeToValue);
+        if (!nodeFrom || !nodeTo) {
+            throw new Error("Both nodes need to exist before an edge can be created");
+        } else {
+            let newEdge = new Edge(value, nodeFrom, nodeTo);
+            nodeFrom.edges.push(nodeTo);
+            this.edges.push(newEdge);
+        }
+    }
+
+    getNodesWithNoIncomingEdges(graph) {
+        let nodesWithNoIncomingEdges = [];
+
+        let inDegree = new Map();
+        for (let node of graph.nodes) {
+            inDegree.set(node, 0);
+        }
+        for (let edge of graph.edges) {
+            inDegree.set(edge.to, inDegree.get(edge.to) + 1);
+        }
+
+        for (let [node, degree] of inDegeree) {
+            if (degree === 0) {
+                nodesWithNoIncomingEdges.push(node);
+            }
+        }
+        return nodesWithNoIncomingEdges
+    }
+}
+
 // 逻辑代码
 class AigcCp extends Contract {
 
