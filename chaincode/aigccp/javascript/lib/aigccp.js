@@ -10,57 +10,50 @@ const { Contract } = require('fabric-contract-api');
 class Node {
     constructor(value) {
         this.value = value;
-        this.edges = [];
-    }
-}
-
-class Edge {
-    constructor(value, nodeFrom, nodeTo) {
-        this.value = value;
-        this.nodeFrom = nodeFrom;
-        this.nodeTo = nodeTo;
+        this.children = []; // 存储子节点
     }
 }
 
 class DAG {
-    constructor(nodes = [], edges = []) {
-        this.nodes = nodes;
-        this.edges = edges;
+    constructor() {
+        this.nodes = []; // 存储图中的所有节点
     }
-
-    addNode(value) {
-        this.nodes.push(new Node(value));
+  
+    // 添加新节点并连接到指定的父节点
+    addNode(data, parentNode = null) {
+        const newNode = new Node(data);
+        this.nodes.push(newNode);
+        if (parentNode) {
+            parentNode.children.push(newNode);
+        }
+        return newNode;
     }
-
-    addEdge(value, nodeFromValue, nodeToValue) {
-        let nodeFrom = this.nodes.find(node => node.value === nodeFromValue);
-        let nodeTo = this.nodes.find(node => node.value, nodeToValue);
-        if (!nodeFrom || !nodeTo) {
-            throw new Error("Both nodes need to exist before an edge can be created");
-        } else {
-            let newEdge = new Edge(value, nodeFrom, nodeTo);
-            nodeFrom.edges.push(nodeTo);
-            this.edges.push(newEdge);
+  
+    // 获取从指定节点到根节点的路径
+    getPath(node) {
+        const path = [];
+        let current = node;
+        while (current) {
+            path.unshift(current.data);
+            current = this.nodes.find(n => n.children.includes(current));
         }
+        return path;
     }
-
-    getNodesWithNoIncomingEdges(graph) {
-        let nodesWithNoIncomingEdges = [];
-
-        let inDegree = new Map();
-        for (let node of graph.nodes) {
-            inDegree.set(node, 0);
-        }
-        for (let edge of graph.edges) {
-            inDegree.set(edge.to, inDegree.get(edge.to) + 1);
-        }
-
-        for (let [node, degree] of inDegeree) {
-            if (degree === 0) {
-                nodesWithNoIncomingEdges.push(node);
+  
+    // 获取指定层级的所有节点
+    getNodesAtLevel(level) {
+        const nodesAtLevel = [];
+        const queue = [{ node: this.nodes[0], level: 0 }];
+        while (queue.length > 0) {
+            const { node, level: currentLevel } = queue.shift();
+            if (currentLevel === level) {
+                nodesAtLevel.push(node.data);
+            }
+            if (currentLevel < level) {
+                node.children.forEach(child => queue.push({ node: child, level: currentLevel + 1 }));
             }
         }
-        return nodesWithNoIncomingEdges
+        return nodesAtLevel;
     }
 }
 
